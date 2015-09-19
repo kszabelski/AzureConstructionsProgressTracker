@@ -89,33 +89,7 @@ namespace AzureConstructionsProgressTracker.Features.ConstructionProjects
             }
             return View(constructionProject);
         }
-
-        // GET: ConstructionProjects/Delete/5
-        public async Task<ActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ConstructionProject constructionProject = await db.ConstructionProjects.FindAsync(id);
-            if (constructionProject == null)
-            {
-                return HttpNotFound();
-            }
-            return View(constructionProject);
-        }
-
-        // POST: ConstructionProjects/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
-        {
-            ConstructionProject constructionProject = await db.ConstructionProjects.FindAsync(id);
-            db.ConstructionProjects.Remove(constructionProject);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)
