@@ -1,24 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using AzureConstructionsProgressTracker.Models;
+using Microsoft.WindowsAzure.Storage;
 
 namespace AzureConstructionsProgressTracker.Features.ProgressTracking
 {
     public class ProgressTrackingController : Controller
     {
         private ConstructionsProgressTrackerContext db = new ConstructionsProgressTrackerContext();
+        private readonly FilesStorageService _filesStorageService;
+
+        public ProgressTrackingController()
+        {
+            CloudStorageAccount cloudStorageAccount;
+            if (CloudStorageAccount.TryParse(
+                ConfigurationManager.ConnectionStrings["AzureStorage"].ConnectionString,
+                out cloudStorageAccount))
+            {
+                _filesStorageService = new FilesStorageService(cloudStorageAccount);
+            }
+        }
 
         // GET: ProgressTracking
         public async Task<ActionResult> Index()
         {
-            var progressTrackingEntries = db.ProgressTrackingEntries.Include(p => p.ConstructionProject);
+            var progressTrackingEntries = db.ProgressTrackingEntries.Include(p => p.ConstructionProject).OrderByDescending(p => p.EntryDate);
             return View(await progressTrackingEntries.ToListAsync());
         }
 
@@ -53,6 +68,17 @@ namespace AzureConstructionsProgressTracker.Features.ProgressTracking
         {
             if (ModelState.IsValid)
             {
+                if (Request.Files.Count > 0)
+                {
+                    var file = Request.Files[0];
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        var fileName = Path.GetFileName(file.FileName);
+                        var filePath = await _filesStorageService.UploadFile(fileName, file);
+                        progressTrackingEntry.PictureReference = filePath;
+                    }
+                }
+
                 progressTrackingEntry.EntryDate = DateTime.Now;
                 db.ProgressTrackingEntries.Add(progressTrackingEntry);
                 await db.SaveChangesAsync();
