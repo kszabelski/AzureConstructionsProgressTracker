@@ -21,5 +21,7 @@ namespace AzureConstructionsProgressTracker.Models
         }
 
         public System.Data.Entity.DbSet<AzureConstructionsProgressTracker.Features.ConstructionProjects.ConstructionProject> ConstructionProjects { get; set; }
+
+        public System.Data.Entity.DbSet<AzureConstructionsProgressTracker.Features.ProgressTracking.ProgressTrackingEntry> ProgressTrackingEntries { get; set; }
     }
 }

@@ -167,6 +167,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Features\ConstructionProjects\ConstructionProject.cs" />
     <Compile Include="Features\ConstructionProjects\ConstructionProjectsController.cs" />
+    <Compile Include="Features\ProgressTracking\ProgressTrackingController.cs" />
+    <Compile Include="Features\ProgressTracking\ProgressTrackingEntry.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -207,10 +209,12 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\ConstructionProjects\Create.cshtml" />
-    <Content Include="Views\ConstructionProjects\Delete.cshtml" />
     <Content Include="Views\ConstructionProjects\Details.cshtml" />
     <Content Include="Views\ConstructionProjects\Edit.cshtml" />
     <Content Include="Views\ConstructionProjects\Index.cshtml" />
+    <Content Include="Views\ProgressTracking\Create.cshtml" />
+    <Content Include="Views\ProgressTracking\Details.cshtml" />
+    <Content Include="Views\ProgressTracking\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
