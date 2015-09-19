@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.Entity;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using AzureConstructionsProgressTracker.Models;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.WindowsAzure.Storage;
 
 namespace AzureConstructionsProgressTracker.Features.ProgressTracking
@@ -18,6 +22,7 @@ namespace AzureConstructionsProgressTracker.Features.ProgressTracking
     {
         private ConstructionsProgressTrackerContext db = new ConstructionsProgressTrackerContext();
         private readonly FilesStorageService _filesStorageService;
+        private readonly TelemetryClient _telemetry = new TelemetryClient();
 
         public ProgressTrackingController()
         {
@@ -28,6 +33,8 @@ namespace AzureConstructionsProgressTracker.Features.ProgressTracking
             {
                 _filesStorageService = new FilesStorageService(cloudStorageAccount);
             }
+
+            _telemetry.InstrumentationKey = TelemetryConfiguration.Active.InstrumentationKey;
         }
 
         // GET: ProgressTracking
@@ -76,6 +83,7 @@ namespace AzureConstructionsProgressTracker.Features.ProgressTracking
                         var fileName = Path.GetFileName(file.FileName);
                         var filePath = await _filesStorageService.UploadFile(fileName, file);
                         progressTrackingEntry.PictureReference = filePath;
+                        _telemetry.TrackTrace(string.Format(CultureInfo.InvariantCulture, "Uploaded file {0}", fileName), SeverityLevel.Information);
                     }
                 }
 
